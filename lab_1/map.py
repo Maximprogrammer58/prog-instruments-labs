@@ -30,7 +30,7 @@ class MapStorage(object):
             table.append(row)
         return table
 
-    def get_data(self, x, y, map_name='qwerty1'):
+    def get_data(self, x, y, map_name="qwerty1"):
         # x,y - logic coords
         x_index = int(x / self.square_size)
         y_index = int(y / self.square_size)
@@ -64,7 +64,7 @@ class Map:
                (401, 3), (402, 6), (403, 4), (404, 4)]
 
     def __new__(cls):
-        if not hasattr(cls, 'instance'):
+        if not hasattr(cls, "instance"):
             cls.instance = super(Game, cls).__new__(cls)
         return cls.instance
 
@@ -80,7 +80,7 @@ class Map:
         self.map = []
         self.objects_on_map = {}
         self.counter += 1
-        self.name = 'qwerty' + str(self.counter)
+        self.name = "qwerty" + str(self.counter)
         self.__create_empty_map()
         self.__diamond_square()
         self.walkable_coords = self.__pack()
@@ -303,11 +303,11 @@ class Map:
         x = 0
         y = 0
         while (y < abs_dy) or (x < abs_dx):
-            napr = random.choice(('left', 'right'))
+            napr = random.choice(("left", "right"))
 
-            if napr == 'left':
+            if napr == "left":
                 x = limited_inc(x, abs_dx)
-            if napr == 'right':
+            if napr == "right":
                 y = limited_inc(y, abs_dy)
 
             self.__set_point(y1 + y * napr_dy, x1 + x * napr_dx, 100)

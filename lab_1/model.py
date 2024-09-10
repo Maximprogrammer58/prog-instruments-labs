@@ -12,10 +12,10 @@ class Game(object):
         self.fps_animate = 10
         self.fps = 30
         self.animate_divider = self.fps / self.fps_animate
-        self.player = FightUnit('4', x=120, y=130, speed=20)
-        self.npcs = [FightUnit('1', x=20, y=30, speed=4.4),
-                     FightUnit('2', x=20, y=30, speed=3.4),
-                     FightUnit('3', x=20, y=30, speed=2.4),
+        self.player = FightUnit("4", x=120, y=130, speed=20)
+        self.npcs = [FightUnit("1", x=20, y=30, speed=4.4),
+                     FightUnit("2", x=20, y=30, speed=3.4),
+                     FightUnit("3", x=20, y=30, speed=2.4),
                      ]
         self.enviroment = []
 
@@ -94,21 +94,21 @@ class FightUnit(object):
         return (self.x, self.y)
 
     def attack(self):
-        print(self.name, ': arrgh!!!')
+        print(self.name, ": arrgh!!!")
         if self.active_target is not None:
             self.active_target.be_attacked(self, Damage())
         else:
-            print('i have no target')
+            print("i have no target")
             self.fight.remove_fighter(self)
 
     def be_attacked(self, enemy, damage):
         self.hp -= damage.power * (100 - self.armor) / 100
         self.last_enemy = enemy
-        print(self.name, ': i got %i %s damage' % (damage.power,
-              damage.type), 'my hp = ', self.hp)
+        print(self.name, ": i got %i %s damage" % (damage.power,
+              damage.type), "my hp = ", self.hp)
         if self.hp <= 0:
             self.fight.remove_fighter(self)
-            print(self.name, 'is dead')
+            print(self.name, "is dead")
 
     def select_active_target(self):
         if self.last_enemy in self.fight.fighters:
@@ -127,7 +127,7 @@ class FightUnit(object):
 
 class Damage(object):
     def __init__(self):
-        self.type = 'physical'
+        self.type = "physical"
         self.power = 30
 
 
@@ -139,7 +139,7 @@ class Fight(object):
             fighter.fight = self
 
     def __repr__(self):
-        return 'In fight:' + ' '.join(
+        return "In fight:" + ' '.join(
             [fighter.name for fighter in self.fighters])
 
     def step(self):
