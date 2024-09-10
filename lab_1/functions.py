@@ -2,6 +2,15 @@ import random
 
 
 def singleton(cls):
+    """
+    A decorator that ensures a class has only one instance.
+
+    Args:
+        cls (type): The class for which a single instance will be created.
+
+    Returns:
+        function: A function that returns the single instance of the class.
+    """
     instances = {}
 
     def getinstance():
@@ -12,6 +21,16 @@ def singleton(cls):
 
 
 def div_by_zero(x, y):
+    """
+    Divides x by y, returning 0 if y is zero.
+
+    Args:
+        x (float): The numerator.
+        y (float): The denominator.
+
+    Returns:
+        float: The result of x divided by y or 0 if y is zero.
+    """
     if y == 0:
         return 0
     else:
@@ -19,6 +38,17 @@ def div_by_zero(x, y):
 
 
 def limited_inc(base, limit, inc=1):
+    """
+    Increases the value of base by inc, without exceeding limit.
+
+    Args:
+        base (float): The initial value.
+        limit (float): The maximum allowable value.
+        inc (float, optional): The increment. Defaults to 1.
+
+    Returns:
+        float: The new value, which does not exceed limit.
+    """
     res = base + inc
     if res > limit:
         return limit
@@ -27,4 +57,14 @@ def limited_inc(base, limit, inc=1):
 
 
 def random_mod(x, a):
+    """
+    Modifies x randomly within a%.
+
+    Args:
+        x (float): The original value.
+        a (float): The percentage deviation.
+
+    Returns:
+        float: The modified value of x.
+    """
     return x * (1 + float(random.randrange(-a, a)) / 100)
