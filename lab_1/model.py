@@ -2,11 +2,12 @@ import random
 
 from functions import div_by_zero
 from functions import singleton
+from typing import Generator
 
 
 @singleton
 class Game(object):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initializes a new game instance.
 
@@ -32,7 +33,7 @@ class Game(object):
                      ]
         self.enviroment = []
 
-    def step(self):
+    def step(self) -> None:
         """
         Executes a single step in the game, updating NPC movements.
         """
@@ -50,7 +51,7 @@ class FightUnit(object):
                  (0, -1),
                  (-1, -1)]
 
-    def __init__(self, name, **args):
+    def __init__(self, name: str, **args) -> None:
         """
         Initializes a fight unit (player or NPC).
 
@@ -68,19 +69,19 @@ class FightUnit(object):
         for k, v in args.items():
             setattr(self, k, v)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Returns a string representation of the fight unit's attributes.
         """
         return '\n'.join(["%s: %s" % (k, v) for k, v in self.__dict__.items()])
 
-    def step(self):
+    def step(self) -> None:
         """
         Advances the unit's program by one step.
         """
         self.program.next()
 
-    def program_stay(self, ticks):
+    def program_stay(self, ticks: int) -> Generator:
         """
         Keeps the unit in place for a specified number of ticks.
 
@@ -92,7 +93,7 @@ class FightUnit(object):
                 yield None
             self.program = self.program_walking()
 
-    def program_walking(self):
+    def program_walking(self) -> Generator:
         """
         Moves the unit randomly within its environment.
         """
@@ -108,7 +109,7 @@ class FightUnit(object):
             if not 0 < self.y < 600:
                 self.program = self.program_go_to(1300, 1300)
 
-    def program_go_to(self, x, y):
+    def program_go_to(self, x, y) -> Generator:
         """
         Moves the unit towards a specified target position.
 
@@ -127,7 +128,7 @@ class FightUnit(object):
             self.y += dy * self.speed
             yield None
 
-    def order_to_go(self, dx, dy):
+    def order_to_go(self, dx: float, dy: float) -> None:
         """
         Orders the unit to move by specified deltas.
 
@@ -144,7 +145,7 @@ class FightUnit(object):
         """
         pass
 
-    def get_pos(self):
+    def get_pos(self) -> tuple:
         """
         Returns the current position of the unit.
 
@@ -153,7 +154,7 @@ class FightUnit(object):
         """
         return (self.x, self.y)
 
-    def attack(self):
+    def attack(self) -> None:
         """
         Executes an attack by the unit, targeting its active target.
         """
@@ -164,7 +165,7 @@ class FightUnit(object):
             print("I have no target")
             self.fight.remove_fighter(self)
 
-    def be_attacked(self, enemy, damage):
+    def be_attacked(self, enemy: "FightUnit", damage: "Damage"):
         """
         Processes an attack against the unit.
 
@@ -180,7 +181,7 @@ class FightUnit(object):
             self.fight.remove_fighter(self)
             print(self.name, "is dead")
 
-    def select_active_target(self):
+    def select_active_target(self) -> None:
         """
         Selects the last enemy as the active target if still valid.
         """
@@ -189,7 +190,7 @@ class FightUnit(object):
         else:
             self.active_target = None
 
-    def set_active_target(self, target):
+    def set_active_target(self, target: "FightUnit") -> None:
         """
         Sets the active target for the unit.
 
@@ -198,7 +199,7 @@ class FightUnit(object):
         """
         self.active_target = target
 
-    def begin_fight(self, target):
+    def begin_fight(self, target: "FightUnit") -> None:
         """
         Initiates a fight with the specified target.
 
@@ -214,7 +215,7 @@ class FightUnit(object):
 
 
 class Damage(object):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initializes damage attributes.
 
@@ -227,7 +228,7 @@ class Damage(object):
 
 
 class Fight(object):
-    def __init__(self, fighters):
+    def __init__(self, fighters: list) -> None:
         """
         Initializes a fight instance with the specified fighters.
 
@@ -239,14 +240,14 @@ class Fight(object):
         for fighter in fighters:
             fighter.fight = self
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Returns a string representation of the fight.
         """
         return "In fight:" + ' '.join(
             [fighter.name for fighter in self.fighters])
 
-    def step(self):
+    def step(self) -> None:
         """
         Executes a single step in the fight, allowing the current fighter to attack.
         """
@@ -254,7 +255,7 @@ class Fight(object):
         self._iterator += 1
         self._iterator = self._iterator % len(self.fighters)
 
-    def add_fighter(self, fighter):
+    def add_fighter(self, fighter: FightUnit) -> None:
         """
         Adds a fighter to the fight.
 
@@ -264,7 +265,7 @@ class Fight(object):
         self.fighters.append(fighter)
         fighter.fight = self
 
-    def remove_fighter(self, fighter):
+    def remove_fighter(self, fighter: FightUnit) -> None:
         """
         Removes a fighter from the fighters list.
 
@@ -279,7 +280,7 @@ class Fight(object):
         fighter.fight = None
         fighter.last_enemy = None
 
-    def is_active(self):
+    def is_active(self) -> bool:
         """
         Checks if the fight is still active.
 

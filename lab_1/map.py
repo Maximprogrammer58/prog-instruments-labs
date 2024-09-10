@@ -6,14 +6,14 @@ from functions import random_mod
 
 
 class MapStorage(object):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initializes MapStorage with an empty cache and a square size of 4.
         """
         self.cache = {}
         self.square_size = 4
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> list:
         """
         Retrieves an item from the cache by key. If the item is a list,
         it returns it; otherwise, it deepens the value and saves it in the cache.
@@ -31,7 +31,7 @@ class MapStorage(object):
             self.cache[key] = table
             return self.cache[key]
 
-    def storage_map(self, map_name, map_data):
+    def storage_map(self, map_name: str, map_data: list):
         """
         Stores the map in the cache.
 
@@ -41,12 +41,12 @@ class MapStorage(object):
         """
         self.cache[map_name] = map_data[:]
 
-    def deepen(self, value, objects=[]):
+    def deepen(self, value: float, objects: list = []) -> list:
         """
         Deepens the value into a 2D array of size square_size.
 
         Args:
-            value (any): The value to deepen.
+            value: The value to deepen.
             objects (list, optional): Additional objects. Defaults to an empty list.
 
         Returns:
@@ -60,7 +60,7 @@ class MapStorage(object):
             table.append(row)
         return table
 
-    def get_data(self, x, y, map_name="qwerty1"):
+    def get_data(self, x: int, y: int, map_name: str = "qwerty1"):
         """
         Retrieves data from the map using logical coordinates x and y.
 
@@ -113,7 +113,7 @@ class Map:
             cls.instance = super(Map, cls).__new__(cls)
         return cls.instance
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initializes the Map object, creating storage and generating the map.
         """
@@ -121,7 +121,7 @@ class Map:
         self.counter = 0
         self.generate()
 
-    def generate(self):
+    def generate(self) -> None:
         """
         Generates the map by creating an empty map and filling it with data.
         """
@@ -139,7 +139,7 @@ class Map:
         self.storage.storage_map(self.name, self.map)
         self.__plant_resources_and_enemies(self.objects)
 
-    def __create_empty_map(self):
+    def __create_empty_map(self) -> None:
         """
         Creates an empty map by filling it with zeros.
         """
@@ -150,7 +150,7 @@ class Map:
                 map_row.append(r)
             self.map.append(map_row)
 
-    def __smoothen(self):
+    def __smoothen(self) -> None:
         """
         A simple blurring function for the map. Gets rid of unwanted
         sharpness such as a single sand tile in the middle of a bunch
@@ -193,7 +193,7 @@ class Map:
                 average /= times
                 self.map[y][x] = average
 
-    def __get_waterline(self):
+    def __get_waterline(self) -> float:
         """
         Retrieves the waterline by calculating the median of the map values.
 
@@ -207,7 +207,7 @@ class Map:
         values.sort()
         return values[int((len(values) - 1) * .50)]
 
-    def __pack(self):
+    def __pack(self) -> list:
         """
         Gathers the coordinates of all points on the map
         that are above the water level.
@@ -223,7 +223,7 @@ class Map:
                     res.append((y, x))
         return res
 
-    def __plant_something(self, something=5):
+    def __plant_something(self, something: int = 5) -> None:
         """
         Plants the specified object at a random location on the map.
 
@@ -240,7 +240,7 @@ class Map:
         # Do not use setpoint!
         # Keep this data in another variable.
 
-    def __random_points(self, count_of_points=1):
+    def __random_points(self, count_of_points: int = 1) -> list:
         """
         Generates random coordinates on the map.
 
@@ -257,7 +257,7 @@ class Map:
             points.append((y, x))
         return points
 
-    def __set_point(self, y, x, value):
+    def __set_point(self, y: int, x: int, value: float) -> bool:
         """
         Sets a value at the specified point on the map.
 
@@ -276,7 +276,7 @@ class Map:
             self.__set_point_2(y, x, value)
             return False
 
-    def __set_point_2(self, y, x, value):
+    def __set_point_2(self, y: int, x: int, value: float) -> None:
         """
         Sets a value at the specified point on the map with boundary consideration.
 
@@ -294,7 +294,7 @@ class Map:
             x = x % (self.width - 1)
         self.map[y][x] = value
 
-    def __get_point(self, y, x):
+    def __get_point(self, y: int, x: int) -> float:
         """
         Retrieves the value from the specified point on the map.
 
@@ -311,7 +311,7 @@ class Map:
         except BaseException:
             return random.random()
 
-    def __diamond_square(self):
+    def __diamond_square(self) -> None:
         """
         Implements the Diamond-Square algorithm for terrain generation.
 
@@ -339,7 +339,7 @@ class Map:
 
         self.waterline = self.__get_waterline()
 
-    def __square(self, squares, a):
+    def __square(self, squares: list, a: int) -> list:
         """
         Processes square sections of the map for the Diamond-Square algorithm.
 
@@ -361,7 +361,7 @@ class Map:
             diamonds.append((y1 + a, x1 + a))
         return diamonds
 
-    def __diamond(self, diamonds, a):
+    def __diamond(self, diamonds: list, a: int) -> list:
         """
         Processes diamond sections of the map for the Diamond-Square algorithm.
 
@@ -411,7 +411,7 @@ class Map:
 
         return squares
 
-    def __generate_caves_and_routes(self, count_of_points=1):
+    def __generate_caves_and_routes(self, count_of_points: int = 1) -> None:
         """
         Generates caves and routes on the map.
 
@@ -433,7 +433,7 @@ class Map:
             self.__set_point(y, x, 200)
             predy, predx = point
 
-    def __dig_cave(self, start_y, start_x, size=100):
+    def __dig_cave(self, start_y: int, start_x: int, size: int = 100) -> None:
         """
         Digs a cave at the specified starting coordinates.
 
@@ -451,7 +451,7 @@ class Map:
             dy, dx = point
             self.__set_point(y + dy, x + dx, 200)
 
-    def __dig_route(self, start, finish):
+    def __dig_route(self, start: tuple, finish: tuple) -> None:
         """
         Digs a route between two points on the map.
 
@@ -485,7 +485,7 @@ class Map:
 
             self.__set_point(y1 + y * napr_dy, x1 + x * napr_dx, 100)
 
-    def __plant_resourses_and_enemies(self, plant_list=[]):
+    def __plant_resourses_and_enemies(self, plant_list: list = []) -> None:
         """
         Plants resources and enemies on the map.
 

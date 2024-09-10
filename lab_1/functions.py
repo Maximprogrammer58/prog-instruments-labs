@@ -1,7 +1,10 @@
 import random
 
+from typing import Any
+from typing import Callable
 
-def singleton(cls):
+
+def singleton(cls) -> Callable[[], Any]:
     """
     A decorator that ensures a class has only one instance.
 
@@ -13,14 +16,14 @@ def singleton(cls):
     """
     instances = {}
 
-    def getinstance():
+    def getinstance() -> Any:
         if cls not in instances:
             instances[cls] = cls()
         return instances[cls]
     return getinstance
 
 
-def div_by_zero(x, y):
+def div_by_zero(x: float, y: float) -> float:
     """
     Divides x by y, returning 0 if y is zero.
 
@@ -37,7 +40,7 @@ def div_by_zero(x, y):
         return x / y
 
 
-def limited_inc(base, limit, inc=1):
+def limited_inc(base: float, limit: float, inc: float = 1) -> float:
     """
     Increases the value of base by inc, without exceeding limit.
 
@@ -56,7 +59,7 @@ def limited_inc(base, limit, inc=1):
         return res
 
 
-def random_mod(x, a):
+def random_mod(x: float, a: float) -> float:
     """
     Modifies x randomly within a%.
 
