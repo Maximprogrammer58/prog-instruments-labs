@@ -1,5 +1,6 @@
 import random
 
+
 def singleton(cls):
     instances = {}
     def getinstance():

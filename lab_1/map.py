@@ -1,7 +1,9 @@
 import random
+
+from functions import div_by_zero
 from functions import limited_inc
 from functions import random_mod
-from functions import div_by_zero
+
 
 class MapStorage(object):
     def __init__(self):

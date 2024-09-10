@@ -1,6 +1,8 @@
 import random
+
 from functions import div_by_zero
 from functions import singleton
+
 
 @singleton
 class Game(object):
