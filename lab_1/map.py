@@ -49,7 +49,6 @@ class MapStorage(object):
         
 
 class Map:
-
     neighbour = [(-1,0),
                  (-1,1),
                  (0,1),
@@ -58,14 +57,12 @@ class Map:
                  (1,-1),
                  (0,-1),
                  (-1,-1)]
-                 
-    #(code,quantity)
+
     objects = [(101,3),(102,1),
                (201,1),
                (301,5),(302,7),(303,9),
                (401,3),(402,6),(403,4),(404,4)]
-    
-    
+
     def __new__(cls):
         if not hasattr(cls, 'instance'):
              cls.instance = super(Game, cls).__new__(cls)
@@ -85,14 +82,9 @@ class Map:
         self.counter+=1
         self.name = 'qwerty'+str(self.counter)
         self.__create_empty_map()
-
-        #self.__generate_caves_and_routes(10)
         self.__diamond_square()
-        
         self.walkable_coords = self.__pack()
         self.__place_for_something = self.walkable_coords[:]
-        
-        
         self.storage.storage_map(self.name,self.map)
         self.__plant_resourses_and_enemies(self.objects)
         
@@ -105,11 +97,9 @@ class Map:
             self.map.append(map_row)
             
     def __smoothen(self):
-
         """A simple blurring function for the map. Gets rid of unwanted
            sharpness such as a single sand tile in the middle of a bunch
            of grass, etc."""
-
         for y in range(0, self.height):
             for x in range(0, self.width):
                 average = 0.0
@@ -145,17 +135,14 @@ class Map:
                 times += 1
 
                 average /= times
-
                 self.map[y][x] = average
 
     def __get_waterline(self):
-
         values = []
         for y in range(0, self.height):
             for x in range(0, self.width):
                 values.append(self.map[y][x])
         values.sort()
-
         return values[int((len(values)-1)*.50)]
 
     def __pack(self):
@@ -172,7 +159,7 @@ class Map:
         self.objects_on_map[(x,y)] = something
         #don't use setpoint! keep this data in another variable
         #if self._set_point(y,x,something):
-         #   self._place_for_something.remove(place)
+        #   self._place_for_something.remove(place)
         
     def __random_points(self,count_of_points=1):
         """random coords in map"""
@@ -188,25 +175,17 @@ class Map:
             self.map[y][x] = value
             return True
         except:
-
             self.__set_point_2(y,x,value)
             return False
             
     def __set_point_2(self,y,x,value):
-
         if y >= self.height-1:
             y = y % (self.height - 1)
-
         if x >= self.width-1:
             x = x % (self.width - 1)
-
         self.map[y][x] = value
 
     def __get_point(self,y,x):
-        """y = y % (self.height - 1)
-        x = x % (self.width - 1)
-        return self.map[y][x] """
-        
         try:
             value = self.map[y][x] 
             return value
@@ -219,7 +198,7 @@ class Map:
         self.map[self.height-1][0] = random.random()
         self.map[self.height-1][self.width-1] = random.random()
         
-        squares = [(0,0)] #y1,x1
+        squares = [(0,0)]
         a = self.width-1
         while a > 1:
             a = a/2
@@ -238,7 +217,6 @@ class Map:
         diamonds = []
         for square in squares:
             y1,x1 = square
-            
             mid = (self.__get_point(y1,x1)
                    + self.__get_point(y1,x1+2*a)
                    + self.__get_point(y1+2*a,x1)
@@ -246,14 +224,13 @@ class Map:
                    ) / 4
             self.__set_point(y1+a,x1+a,random_mod(mid,a/10+10))
             diamonds.append((y1+a,x1+a))
-            
         return diamonds
         
     def __diamond(self,diamonds,a):
         squares = []
         for diamond in diamonds:
             y,x = diamond
-            
+
             left = (self.__get_point(y,x)
                    + self.__get_point(y-a,x-a)
                    + self.__get_point(y,x-2*a)
@@ -267,6 +244,7 @@ class Map:
                    + self.__get_point(y,x+2*a)
                    + self.__get_point(y+a,x+a)
                    ) / 4
+
             self.__set_point(y,x+a,random_mod(right,a/10+10))
             squares.append((y,x))
             
@@ -275,6 +253,7 @@ class Map:
                    + self.__get_point(y-2*a,x)
                    + self.__get_point(y-a,x+a)
                    ) / 4
+
             self.__set_point(y-a,x,random_mod(top,a/10+10))
             squares.append((y-a,x))
             
@@ -290,7 +269,6 @@ class Map:
     
     def __generate_caves_and_routes(self,count_of_points=1):
         cave_centers = self.__random_points(count_of_points)
-            
         predx = -1
         predy = -1
         for point in cave_centers:
@@ -305,7 +283,6 @@ class Map:
         s = size
         x = start_x
         y = start_y
-        
         for point in self.neighbour:
             dy,dx = point
             self.__set_point(y+dy,x+dx,200)

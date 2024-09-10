@@ -6,7 +6,6 @@ from functions import singleton
 
 @singleton
 class Game(object):
-
     def __init__(self):
         self.counter = 0
         self.paused = True
@@ -19,7 +18,6 @@ class Game(object):
                    FightUnit('3',x=20,y=30,speed=2.4),
                    ]
         self.enviroment=[]
- 
     
     def step(self):
         for npc in self.npcs:
@@ -27,7 +25,6 @@ class Game(object):
 
 
 class FightUnit(object):
-    
     neighbour = [(-1,0),
                  (-1,1),
                  (0,1),
@@ -69,7 +66,6 @@ class FightUnit(object):
                 self.x += dx*self.speed
                 self.y += dy*self.speed
                 yield None
-                
             if not 0<self.x<600:
                 self.program = self.program_go_to(1300,1300)
             if not 0<self.y<600:
@@ -85,13 +81,11 @@ class FightUnit(object):
             
             self.x += dx*self.speed
             self.y += dy*self.speed
-                    
             yield None
 
     def order_to_go(self,dx,dy):
         self.x+=dx*self.speed
         self.y+=dy*self.speed
-
 
     def get_stats(self):
         pass
@@ -129,15 +123,16 @@ class FightUnit(object):
         self.set_active_target(target)
         target.set_active_target(self)
         return Fight([self,target])
-        
+
+
 class Damage(object):
     def __init__(self):
         self.type = 'physical'
         self.power = 30
-    
+
+
 class Fight(object):
-    def __init__(self, fighters):   
-        
+    def __init__(self, fighters):
         self.fighters = fighters
         self._iterator = 0
         for fighter in fighters:
