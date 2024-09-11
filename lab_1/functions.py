@@ -1,7 +1,6 @@
 import random
 
-from typing import Any
-from typing import Callable
+from typing import Any, Callable
 
 
 def singleton(cls) -> Callable[[], Any]:

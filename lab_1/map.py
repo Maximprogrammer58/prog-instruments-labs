@@ -1,8 +1,6 @@
 import random
 
-from functions import div_by_zero
-from functions import limited_inc
-from functions import random_mod
+from functions import div_by_zero, limited_inc, random_mod
 
 
 class MapStorage(object):
@@ -15,8 +13,9 @@ class MapStorage(object):
 
     def __getitem__(self, key: str) -> list:
         """
-        Retrieves an item from the cache by key. If the item is a list,
-        it returns it; otherwise, it deepens the value and saves it in the cache.
+        Retrieves an item from the cache by key.
+        If the item is a list, it returns it; otherwise,
+        it deepens the value and saves it in the cache.
 
         Args:
             key (str): The key to access the cache item.
@@ -47,7 +46,7 @@ class MapStorage(object):
 
         Args:
             value: The value to deepen.
-            objects (list, optional): Additional objects. Defaults to an empty list.
+            objects (list, optional): Additional objects.
 
         Returns:
             list: A 2D array with the deepened value.
@@ -67,7 +66,7 @@ class MapStorage(object):
         Args:
             x (int): The x-coordinate.
             y (int): The y-coordinate.
-            map_name (str, optional): The name of the map. Defaults to "qwerty1".
+            map_name (str, optional): The name of the map.
 
         Returns:
             any: The data from the map at the specified coordinates.
@@ -88,19 +87,19 @@ class MapStorage(object):
 
 
 class Map:
-    neighbour = [(-1, 0),
-                 (-1, 1),
-                 (0, 1),
-                 (1, 1),
-                 (1, 0),
-                 (1, -1),
-                 (0, -1),
-                 (-1, -1)]
+    neighbour = [
+        (-1, 0), (-1, 1),
+        (0, 1), (1, 1),
+        (1, 0), (1, -1),
+        (0, -1), (-1, -1)
+    ]
 
-    objects = [(101, 3), (102, 1),
-               (201, 1),
-               (301, 5), (302, 7), (303, 9),
-               (401, 3), (402, 6), (403, 4), (404, 4)]
+    objects = [
+        (101, 3), (102, 1),
+        (201, 1),
+        (301, 5), (302, 7), (303, 9),
+        (401, 3), (402, 6), (403, 4), (404, 4)
+    ]
 
     def __new__(cls):
         """
@@ -226,6 +225,7 @@ class Map:
     def __plant_something(self, something: int = 5) -> None:
         """
         Plants the specified object at a random location on the map.
+        Do not use setpoint! Keep this data in another variable.
 
         Parameters:
         something (int): The code of the object to be planted.
@@ -237,8 +237,6 @@ class Map:
         place = random.choice(self.__place_for_something)
         y, x = place
         self.objects_on_map[(x, y)] = something
-        # Do not use setpoint!
-        # Keep this data in another variable.
 
     def __random_points(self, count_of_points: int = 1) -> list:
         """
@@ -278,7 +276,8 @@ class Map:
 
     def __set_point_2(self, y: int, x: int, value: float) -> None:
         """
-        Sets a value at the specified point on the map with boundary consideration.
+        Sets a value at the specified point
+        on the map with boundary consideration.
 
         Parameters:
         y (int): The Y coordinate.
@@ -433,7 +432,7 @@ class Map:
             self.__set_point(y, x, 200)
             predy, predx = point
 
-    def __dig_cave(self, start_y: int, start_x: int, size: int = 100) -> None:
+    def __dig_cave(self, start_y: int, start_x: int) -> None:
         """
         Digs a cave at the specified starting coordinates.
 
@@ -444,12 +443,9 @@ class Map:
 
         Sets surrounding points to indicate a cave.
         """
-        s = size
-        x = start_x
-        y = start_y
         for point in self.neighbour:
             dy, dx = point
-            self.__set_point(y + dy, x + dx, 200)
+            self.__set_point(start_y + dy, start_x + dx, 200)
 
     def __dig_route(self, start: tuple, finish: tuple) -> None:
         """

@@ -1,7 +1,6 @@
 import random
 
-from functions import div_by_zero
-from functions import singleton
+from functions import div_by_zero, singleton
 from typing import Generator
 
 
@@ -27,10 +26,11 @@ class Game(object):
         self.fps = 30
         self.animate_divider = self.fps / self.fps_animate
         self.player = FightUnit("4", x=120, y=130, speed=20)
-        self.npcs = [FightUnit("1", x=20, y=30, speed=4.4),
-                     FightUnit("2", x=20, y=30, speed=3.4),
-                     FightUnit("3", x=20, y=30, speed=2.4),
-                     ]
+        self.npcs = [
+            FightUnit("1", x=20, y=30, speed=4.4),
+            FightUnit("2", x=20, y=30, speed=3.4),
+            FightUnit("3", x=20, y=30, speed=2.4),
+        ]
         self.enviroment = []
 
     def step(self) -> None:
@@ -42,14 +42,12 @@ class Game(object):
 
 
 class FightUnit(object):
-    neighbour = [(-1, 0),
-                 (-1, 1),
-                 (0, 1),
-                 (1, 1),
-                 (1, 0),
-                 (1, -1),
-                 (0, -1),
-                 (-1, -1)]
+    neighbour = [
+        (-1, 0), (-1, 1),
+        (0, 1), (1, 1),
+        (1, 0), (1, -1),
+        (0, -1), (-1, -1)
+    ]
 
     def __init__(self, name: str, **args) -> None:
         """
@@ -249,7 +247,8 @@ class Fight(object):
 
     def step(self) -> None:
         """
-        Executes a single step in the fight, allowing the current fighter to attack.
+        Executes a single step in the fight,
+        allowing the current fighter to attack.
         """
         self.fighters[self._iterator].attack()
         self._iterator += 1
