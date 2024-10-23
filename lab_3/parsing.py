@@ -32,7 +32,8 @@ def parsing_weather(URL: str) -> None:
             wind_speed = 0
         data.append([day, temperature, pressure, wind_direction, wind_speed])
 
-    write_csv('parsing_weather', data, ["День", "Температура", "Давление", "Направление ветра", "Скорость ветра"])
+    write_csv('parsing_weather', data,
+              ["День", "Температура,°C", "Давление,(мм.рт.ст)", "Направление ветра", "Скорость ветра(м/с)"])
 
 
 def parsing_logs(logs_path: str) -> None:
