@@ -4,8 +4,11 @@ import requests
 from file_handler import write_csv, read_logs
 
 
-def parsing_weather() -> None:
-    URL = "https://www.gismeteo.ru/diary/4618/2020/9/"
+def parsing_weather(URL: str) -> None:
+    """Parsing the weather forecast for the month
+       Args:
+         URL: the address of the weather calendar for the month
+    """
     html_page = requests.get(URL, headers={"User-Agent": "Mozilla/5.0"})
     html_doc = html_page.text
     data = []
@@ -32,12 +35,12 @@ def parsing_weather() -> None:
     write_csv('parsing_weather', data, ["День", "Температура", "Давление", "Направление ветра", "Скорость ветра"])
 
 
-def parsing_logs(logs_path: str):
+def parsing_logs(logs_path: str) -> None:
+    """Parsing a file with windows logs
+       Args:
+         logs_path: the path to the log file
+    """
     logs = read_logs(logs_path)
     pattern = r'(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}), (?P<level>\w+)\s+(?P<source>\w+)\s+(?P<message>.*)'
     matches = re.findall(pattern, logs)
     write_csv("parsing_logs", matches, ['Timestamp', 'Level', 'Source', 'Message'])
-
-
-
-
