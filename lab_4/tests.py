@@ -1,45 +1,62 @@
+import telebot
+import logging
+import logging_config
+
 from help_func import *
+from telebot import types
 
 
-token = open("token").readline()
+token = open("token").readline().strip()
 bot = telebot.TeleBot(token)
 
+logging_config.setup_logging()
 
-def testing(message):
+
+def testing(message: types.CallbackQuery) -> None:
+    """Обрабатывает запрос пользователя на начало теста.
+
+    Args:
+        message (types.CallbackQuery): Callback-запрос от пользователя с информацией о тесте.
+    """
     logging.info(f"User {message.from_user.id} initiated a test with data: {message.data}")
-    if message.data == "Test_places":
-        gen_id_test(message, "test_files/public_test", "pl")
-    elif message.data == "Test_qr":
-        gen_id_test(message, "test_files/qr_test", "qr")
-    elif message.data == "Test_phishing":
-        gen_id_test(message, "test_files/phishing_test", "ph")
-    elif message.data == "Test_social":
-        gen_id_test(message, "test_files/social_test", "se")
-    elif message.data == "Test_osint":
-        gen_id_test(message, "test_files/test_osint", "osint")
-    elif message.data == "Test_passwords":
-        gen_id_test(message, "test_files/test_passwords", "ps")
-    elif message.data == "Test_physical":
-        gen_id_test(message, "test_files/phys_test", "pd")
+
+    test_mapping = {
+        "Test_places": ("test_files/public_test", "pl"),
+        "Test_qr": ("test_files/qr_test", "qr"),
+        "Test_phishing": ("test_files/phishing_test", "ph"),
+        "Test_social": ("test_files/social_test", "se"),
+        "Test_osint": ("test_files/test_osint", "osint"),
+        "Test_passwords": ("test_files/test_passwords", "ps"),
+        "Test_physical": ("test_files/phys_test", "pd"),
+    }
+
+    if message.data in test_mapping:
+        gen_id_test(message, *test_mapping[message.data])
     else:
         logging.warning(f"User {message.from_user.id} provided an unknown test type: {message.data}")
 
 
-def check_ans(message):
+def check_ans(message: types.CallbackQuery) -> None:
+    """Проверяет ответ пользователя на тест.
+
+    Args:
+        message (types.CallbackQuery): Callback-запрос от пользователя с данными ответа.
+    """
     logging.info(f"User {message.from_user.id} submitted an answer with data: {message.data}")
-    if "pl" in message.data:
-        check_usr_ans(message, "test_files/public_test", score)
-    elif "qr" in message.data:
-        check_usr_ans(message, "qr_test", score)
-    elif "ph" in message.data:
-        check_usr_ans(message, "test_files/phishing_test", score)
-    elif "se" in message.data:
-        check_usr_ans(message, "test_files/social_test", score)
-    elif "osing" in message.data:
-        check_usr_ans(message, "test_files/test_osint", score)
-    elif "ps" in message.data:
-        check_usr_ans(message, "test_files/test_passwords", score)
-    elif "pd" in message.data:
-        check_usr_ans(message, "test_files/phys_test", score)
-    else:
-        logging.warning(f"User {message.from_user.id} submitted an answer for an unknown test type: {message.data}")
+
+    answer_mapping = {
+        "pl": "test_files/public_test",
+        "qr": "qr_test",
+        "ph": "test_files/phishing_test",
+        "se": "test_files/social_test",
+        "osing": "test_files/test_osint",
+        "ps": "test_files/test_passwords",
+        "pd": "test_files/phys_test",
+    }
+
+    for key in answer_mapping.keys():
+        if key in message.data:
+            check_usr_ans(message, answer_mapping[key], score)
+            return
+
+    logging.warning(f"User {message.from_user.id} submitted an answer for an unknown test type: {message.data}")

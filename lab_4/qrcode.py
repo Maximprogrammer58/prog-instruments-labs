@@ -4,13 +4,19 @@ import logging
 import logging_config
 
 from help_func import *
+from telebot import types
 from pyzbar import pyzbar
 
 
 logging_config.setup_logging()
 
 
-def qr_code(message):
+def qr_code(message: types.Message) -> None:
+    """Обрабатывает изображение, отправленное пользователем, и декодирует QR-код.
+
+    Args:
+        message (types.Message): Сообщение от пользователя, содержащее изображение с QR-кодом.
+    """
     user_id = message.chat.id
     try:
         f_id = message.photo[-1].file_id
@@ -29,7 +35,6 @@ def qr_code(message):
             bot.send_message(user_id, text="Ошибка при обработке изображения.")
             return
 
-        # Декодирование QR-кодов
         barcodes = pyzbar.decode(img)
 
         if barcodes:

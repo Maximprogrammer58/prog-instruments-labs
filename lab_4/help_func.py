@@ -7,7 +7,7 @@ import logging_config
 from telebot import types
 
 
-token = open("token").readline()
+token = open("token").readline().strip()
 bot = telebot.TeleBot(token)
 
 logging_config.setup_logging()
@@ -49,7 +49,17 @@ texts_tree = {
 score = 0
 
 
-def get_bool_theme(inline_items, db, message):
+def get_bool_theme(inline_items: list, db, message) -> list:
+    """Обновляет inline-кнопки тем в зависимости от завершенных тем пользователя.
+
+    Args:
+        inline_items (list): Список inline-кнопок.
+        db: Объект базы данных.
+        message: Сообщение от пользователя.
+
+    Returns:
+        list: Обновленный список inline-кнопок.
+    """
     inline_items = copy.deepcopy(inline_items)
     users_done_theme = db.get_course_step(message.from_user.id)
     for i in range(len(inline_items) - 1):
@@ -60,33 +70,53 @@ def get_bool_theme(inline_items, db, message):
     return inline_items
 
 
-def get_keyboard_button(button_items, resize_keyboard=True, one_time_keyboard=True):
+def get_keyboard_button(button_items: list, resize_keyboard: bool = True, one_time_keyboard: bool = True) -> types.ReplyKeyboardMarkup:
+    """Создает клавиатуру с кнопками.
+
+    Args:
+        button_items (list): Список кнопок.
+        resize_keyboard (bool): Нужно ли изменять размер клавиатуры.
+        one_time_keyboard (bool): Нужно ли скрывать клавиатуру после нажатия.
+
+    Returns:
+        types.ReplyKeyboardMarkup: Клавиатура с кнопками.
+    """
     keyboard = telebot.types.ReplyKeyboardMarkup(resize_keyboard=resize_keyboard, one_time_keyboard=one_time_keyboard)
     for item in button_items:
         if isinstance(item, list):
-            one_line_buttons = []
-            for i in item:
-                one_line_buttons.append(telebot.types.KeyboardButton(i))
+            one_line_buttons = [telebot.types.KeyboardButton(i) for i in item]
             keyboard.add(*one_line_buttons)
         else:
             keyboard.add(telebot.types.KeyboardButton(text=item))
     return keyboard
 
 
-def get_inline_button(inline_items, row_width=3):
+def get_inline_button(inline_items: list, row_width: int = 3) -> types.InlineKeyboardMarkup:
+    """Создает inline-кнопки.
+
+    Args:
+        inline_items (list): Список inline-кнопок.
+        row_width (int): Ширина строки кнопок.
+
+    Returns:
+        types.InlineKeyboardMarkup: Inline-кнопки.
+    """
     inline_buttons = telebot.types.InlineKeyboardMarkup(row_width=row_width)
     for item in inline_items:
         if isinstance(item[0], list):
-            one_line_buttons = []
-            for i in item:
-                one_line_buttons.append(telebot.types.InlineKeyboardButton(text=i[0], callback_data=i[1]))
+            one_line_buttons = [telebot.types.InlineKeyboardButton(text=i[0], callback_data=i[1]) for i in item]
             inline_buttons.add(*one_line_buttons)
         else:
             inline_buttons.add(telebot.types.InlineKeyboardButton(text=item[0], callback_data=item[1]))
     return inline_buttons
 
 
-def callbackk(message):
+def callbackk(message: types.CallbackQuery) -> None:
+    """Обрабатывает callback-запросы от кнопок.
+
+    Args:
+        message (types.CallbackQuery): Callback-запрос от пользователя.
+    """
     user_id = message.from_user.id
     data = message.data
 
@@ -101,7 +131,13 @@ def callbackk(message):
     bot.answer_callback_query(callback_query_id=message.id)
 
 
-def handle_courses(user_id, data):
+def handle_courses(user_id: int, data: str) -> None:
+    """Обрабатывает запросы, связанные с курсами.
+
+    Args:
+        user_id (int): Идентификатор пользователя.
+        data (str): Данные из callback.
+    """
     logging.info(f"User {user_id} is handling courses.")
     if "final" in data:
         handle_final_course(user_id)
@@ -109,46 +145,88 @@ def handle_courses(user_id, data):
         handle_choose_themes(user_id)
 
 
-def handle_final_course(user_id):
-    if is_done_full_course(db, message):
+def handle_final_course(user_id: int) -> None:
+    """Обрабатывает запрос на завершение курса.
+
+    Args:
+        user_id (int): Идентификатор пользователя.
+    """
+    if is_done_full_course(db, user_id):
         logging.info(f"User {user_id} completed the course.")
         bot.send_message(user_id, text=texts_tree['done_course'],
                          reply_markup=get_inline_button(INLINE_MENU))
     else:
         logging.info(f"User {user_id} has not completed the course.")
         bot.send_message(user_id, text=texts_tree['not_done_course'],
-                         reply_markup=get_inline_button(get_bool_theme(INLINE_THEMES, db, message)))
+                         reply_markup=get_inline_button(get_bool_theme(INLINE_THEMES, db, user_id)))
 
 
-def handle_choose_themes(user_id):
+def handle_choose_themes(user_id: int) -> None:
+    """Обрабатывает запрос на выбор темы.
+
+    Args:
+        user_id (int): Идентификатор пользователя.
+    """
     if not db.get_course_step(user_id):
         db.insert_course_step(0, user_id, False)
     bot.send_message(user_id, text=texts_tree['choose_themes'],
-                     reply_markup=get_inline_button(get_bool_theme(INLINE_THEMES, db, message)))
+                     reply_markup=get_inline_button(get_bool_theme(INLINE_THEMES, db, user_id)))
 
 
-def handle_test(user_id):
+def handle_test(user_id: int) -> None:
+    """Обрабатывает запрос на тестирование.
+
+    Args:
+        user_id (int): Идентификатор пользователя.
+    """
     if not db.get_result(user_id):
         db.insert_test_result(user_id)
     bot.send_message(user_id, text=texts_tree["choose_themes"],
                      reply_markup=get_inline_button(INLINE_TEST_NUMBERS, 2))
     logging.info(f"User {user_id} is starting a test.")
 
-def check_theme_num(data):
+
+def check_theme_num(data: str) -> str | None:
+    """Проверяет номер темы в данных.
+
+    Args:
+        data (str): Данные из callback.
+
+    Returns:
+        str | None: Номер темы или None, если не найден.
+    """
     for i in range(len(INLINE_THEMES) - 1):
         if str(i) in data:
             return str(i)
+    return None
 
 
-def is_done_full_course(db, message):
-    info = db.get_course_step(message.from_user.id)
-    for i in range(1, len(info)):
-        if info[i] in (False, None):
-            return False
-    return True
+def is_done_full_course(db, user_id: int) -> bool:
+    """Проверяет, завершен ли полный курс.
+
+    Args:
+        db: Объект базы данных.
+        user_id (int): Идентификатор пользователя.
+
+    Returns:
+        bool: True, если курс завершен, иначе False.
+    """
+    info = db.get_course_step(user_id)
+    return all(info[i] for i in range(1, len(info)))
 
 
-def edit_inline_button(theme_num, inline_view_course, db, message):
+def edit_inline_button(theme_num: str, inline_view_course: list, db, user_id: int) -> list:
+    """Редактирует inline-кнопки для курса.
+
+    Args:
+        theme_num (str): Номер темы.
+        inline_view_course (list): Список текущих inline-кнопок.
+        db: Объект базы данных.
+        user_id (int): Идентификатор пользователя.
+
+    Returns:
+        list: Обновленный список inline-кнопок.
+    """
     list_courses = copy.deepcopy(inline_view_course)
 
     if theme_num == str(0):
@@ -160,12 +238,19 @@ def edit_inline_button(theme_num, inline_view_course, db, message):
     else:
         list_courses[0][0][1] += str(int(theme_num) + 1)
         list_courses[0][1][1] += str(int(theme_num) - 1)
-    if not is_done_full_course(db, message):
+
+    if not is_done_full_course(db, user_id):
         del list_courses[1]
     return list_courses
 
 
-def delete_last_messages(message, all_back=True):
+def delete_last_messages(message: types.Message, all_back: bool = True) -> None:
+    """Удаляет последние сообщения пользователя.
+
+    Args:
+        message (types.Message): Сообщение от пользователя.
+        all_back (bool): Удалять ли все последние сообщения.
+    """
     if all_back:
         for i in range(10):
             try:
@@ -176,18 +261,24 @@ def delete_last_messages(message, all_back=True):
         bot.delete_message(message.chat.id, message.message_id)
 
 
-def gen_id_test(message, test, test_code):
-    file = open(test, encoding="utf-8")
-    rows = file.readlines()[::-1]
-    c = len(rows)
-    c2 = 1
-    c3 = 2
-    c4 = 3
-    for i in rows:
-        question, ans_1, ans_2, ans_3, right_answer = i.split(";")
-        answers = [[ans_1, ID_TESTS[test_code].format(c, c2)], [ans_2, ID_TESTS[test_code].format(c, c3)],
-                   [ans_3, ID_TESTS[test_code].format(c, c4)]]
-        bot.send_message(message.message.chat.id, text=question, reply_markup=get_inline_button(answers, 3))
-        c -= 1
-    file.close()
-    logging.info(f"Generated test for user {message.message.chat.id} with {len(rows)} questions.")
+def gen_id_test(message: types.Message, test: str, test_code: str) -> None:
+    """Генерирует тест для пользователя.
+
+    Args:
+        message (types.Message): Сообщение от пользователя.
+        test (str): Путь к файлу с тестом.
+        test_code (str): Код теста.
+    """
+    with open(test, encoding="utf-8") as file:
+        rows = file.readlines()[::-1]
+        c = len(rows)
+        for c2, i in enumerate(rows, start=1):
+            question, ans_1, ans_2, ans_3, right_answer = i.split(";")
+            answers = [
+                [ans_1, ID_TESTS[test_code].format(c, c2)],
+                [ans_2, ID_TESTS[test_code].format(c, c2 + 1)],
+                [ans_3, ID_TESTS[test_code].format(c, c2 + 2)]
+            ]
+            bot.send_message(message.chat.id, text=question, reply_markup=get_inline_button(answers, 3))
+            c -= 1
+    logging.info(f"Generated test for user {message.chat.id} with {len(rows)} questions.")
