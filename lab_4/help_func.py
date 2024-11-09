@@ -1,12 +1,16 @@
 import telebot
 import copy
 import database as db
+import logging
+import logging_config
 
 from telebot import types
 
 
 token = open("token").readline()
 bot = telebot.TeleBot(token)
+
+logging_config.setup_logging()
 
 INLINE_MENU = [[["Курс", "courses"], ["Тесты", "TEST"]], ["Рейтинг", "rating"]]
 INLINE_VIEW_THEME = [[["Следующая тема", "theme_"], ["Предыдущая тема", "theme_"]], ["Завершить курс", "final_courses"],

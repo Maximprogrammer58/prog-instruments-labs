@@ -1,9 +1,12 @@
 import sqlite3
+import logging
+import logging_config
 
 
 conn = sqlite3.connect('database.db', check_same_thread=False)
 cursor = conn.cursor()
 
+logging_config.setup_logging()
 
 def create_users_table():  # Создание таблицы пользователей
     cursor.execute("""CREATE TABLE IF NOT EXISTS users (user_id INT PRIMARY KEY, username TEXT, fullname TEXT)""")

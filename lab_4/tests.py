@@ -1,5 +1,4 @@
 from help_func import *
-from right_ans import check_usr_ans
 
 
 token = open("token").readline()
@@ -7,6 +6,7 @@ bot = telebot.TeleBot(token)
 
 
 def testing(message):
+    logging.info(f"User {message.from_user.id} initiated a test with data: {message.data}")
     if message.data == "Test_places":
         gen_id_test(message, "test_files/public_test", "pl")
     elif message.data == "Test_qr":
@@ -21,9 +21,12 @@ def testing(message):
         gen_id_test(message, "test_files/test_passwords", "ps")
     elif message.data == "Test_physical":
         gen_id_test(message, "test_files/phys_test", "pd")
+    else:
+        logging.warning(f"User {message.from_user.id} provided an unknown test type: {message.data}")
 
 
 def check_ans(message):
+    logging.info(f"User {message.from_user.id} submitted an answer with data: {message.data}")
     if "pl" in message.data:
         check_usr_ans(message, "test_files/public_test", score)
     elif "qr" in message.data:
@@ -38,3 +41,5 @@ def check_ans(message):
         check_usr_ans(message, "test_files/test_passwords", score)
     elif "pd" in message.data:
         check_usr_ans(message, "test_files/phys_test", score)
+    else:
+        logging.warning(f"User {message.from_user.id} submitted an answer for an unknown test type: {message.data}")
