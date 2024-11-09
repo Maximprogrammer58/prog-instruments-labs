@@ -102,6 +102,7 @@ def callbackk(message):
 
 
 def handle_courses(user_id, data):
+    logging.info(f"User {user_id} is handling courses.")
     if "final" in data:
         handle_final_course(user_id)
     else:
@@ -110,9 +111,11 @@ def handle_courses(user_id, data):
 
 def handle_final_course(user_id):
     if is_done_full_course(db, message):
+        logging.info(f"User {user_id} completed the course.")
         bot.send_message(user_id, text=texts_tree['done_course'],
                          reply_markup=get_inline_button(INLINE_MENU))
     else:
+        logging.info(f"User {user_id} has not completed the course.")
         bot.send_message(user_id, text=texts_tree['not_done_course'],
                          reply_markup=get_inline_button(get_bool_theme(INLINE_THEMES, db, message)))
 
@@ -129,7 +132,7 @@ def handle_test(user_id):
         db.insert_test_result(user_id)
     bot.send_message(user_id, text=texts_tree["choose_themes"],
                      reply_markup=get_inline_button(INLINE_TEST_NUMBERS, 2))
-
+    logging.info(f"User {user_id} is starting a test.")
 
 def check_theme_num(data):
     for i in range(len(INLINE_THEMES) - 1):
@@ -167,9 +170,8 @@ def delete_last_messages(message, all_back=True):
         for i in range(10):
             try:
                 bot.delete_message(message.chat.id, message.message_id - i)
-            except:
-                pass
-
+            except Exception as e:
+                logging.error(f"Failed to delete message {message.message_id - i} for user {message.chat.id}: {e}")
     else:
         bot.delete_message(message.chat.id, message.message_id)
 
@@ -177,7 +179,7 @@ def delete_last_messages(message, all_back=True):
 def gen_id_test(message, test, test_code):
     file = open(test, encoding="utf-8")
     rows = file.readlines()[::-1]
-    c = len(rows)  # кол-во вопросов
+    c = len(rows)
     c2 = 1
     c3 = 2
     c4 = 3
@@ -188,3 +190,4 @@ def gen_id_test(message, test, test_code):
         bot.send_message(message.message.chat.id, text=question, reply_markup=get_inline_button(answers, 3))
         c -= 1
     file.close()
+    logging.info(f"Generated test for user {message.message.chat.id} with {len(rows)} questions.")
