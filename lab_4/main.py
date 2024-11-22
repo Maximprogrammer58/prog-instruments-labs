@@ -17,10 +17,10 @@ db.create_course_step_table()
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message: types.Message) -> None:
-    """Обрабатывает команду /start и приветствует пользователя.
+    """Processes the /start command and greets the user.
 
     Args:
-        message (types.Message): Сообщение от пользователя.
+        message (types.Message): A message from the user.
     """
     logging.info(f"Received /start command from user {message.from_user.id}")
 
@@ -39,10 +39,10 @@ def send_welcome(message: types.Message) -> None:
 
 
 def get_username(message: types.Message) -> None:
-    """Получает ФИО пользователя и регистрирует его.
+    """Receives the user's full name and registers it.
 
     Args:
-        message (types.Message): Сообщение от пользователя с ФИО.
+        message (types.Message): A message from a user with a full name.
     """
     inline_buttons = get_inline_button(INLINE_MENU, 2)
     db.insert_user(message.from_user.id, message.from_user.username, message.text)
@@ -55,10 +55,10 @@ def get_username(message: types.Message) -> None:
 
 @bot.message_handler(commands=['help'])
 def send_help(message: types.Message) -> None:
-    """Обрабатывает команду /help и отправляет помощь пользователю.
+    """Processes the /help command and sends help to the user.
 
     Args:
-        message (types.Message): Сообщение от пользователя.
+        message (types.Message): A message from the user.
     """
     logging.info(f"Received /help command from user {message.from_user.id}")
     bot.send_message(message.from_user.id, texts_tree['help'])
@@ -67,10 +67,10 @@ def send_help(message: types.Message) -> None:
 
 @bot.message_handler(commands=['menu'])
 def send_menu(message: types.Message) -> None:
-    """Отправляет меню пользователю.
+    """Sends the user's menu.
 
     Args:
-        message (types.Message): Сообщение от пользователя.
+        message (types.Message): A message from the user.
     """
     logging.info(f"User {message.from_user.id} requested menu.")
     inline_buttons = get_inline_button(INLINE_MENU, 2)
@@ -80,10 +80,10 @@ def send_menu(message: types.Message) -> None:
 
 @bot.message_handler(content_types=['text'])
 def wtf(message: types.Message) -> None:
-    """Обрабатывает неожиданные текстовые сообщения от пользователя.
+    """ Handles unexpected text messages from the user.
 
-    Args:
-        message (types.Message): Сообщение от пользователя.
+        Args:
+            message (types.Message): A message from the user.
     """
     logging.warning(f"Received unexpected text from user {message.from_user.id}: {message.text}")
     inline_buttons = get_inline_button(INLINE_MENU, 2)
@@ -93,10 +93,10 @@ def wtf(message: types.Message) -> None:
 
 @bot.callback_query_handler(lambda message: "menu" in message.data)
 def redirect_menu(message: types.CallbackQuery) -> None:
-    """Перенаправляет пользователя в меню.
+    """ Redirects the user to the menu.
 
     Args:
-        message (types.CallbackQuery): Callback-запрос от пользователя.
+        message (types.Call back Query): A callback request from the user.
     """
     logging.info(f"User {message.from_user.id} redirected to menu.")
     delete_last_messages(message.message)
@@ -105,10 +105,10 @@ def redirect_menu(message: types.CallbackQuery) -> None:
 
 @bot.callback_query_handler(lambda message: "theme" in message.data)
 def view_theme(message: types.CallbackQuery) -> None:
-    """Обрабатывает запрос на просмотр темы курса.
+    """ Processes a request to view the course topic.
 
-    Args:
-        message (types.CallbackQuery): Callback-запрос от пользователя.
+        Args:
+            message (types.Call back Query): A callback request from the user.
     """
     theme_num = check_theme_num(message.data)
     db.update_course_step(theme_num, message.from_user.id, True)
@@ -120,10 +120,10 @@ def view_theme(message: types.CallbackQuery) -> None:
 
 @bot.callback_query_handler(lambda message: "Test" in message.data)
 def test(message: types.CallbackQuery) -> None:
-    """Обрабатывает запрос на начало теста.
+    """ Processes the request to start the test.
 
-    Args:
-        message (types.CallbackQuery): Callback-запрос от пользователя.
+        Args:
+            message (types.Call back Query): A callback request from the user.
     """
     logging.info(f"User {message.from_user.id} started a test.")
     delete_last_messages(message.message, False)
@@ -132,10 +132,10 @@ def test(message: types.CallbackQuery) -> None:
 
 @bot.callback_query_handler(lambda message: "pl" in message.data)
 def check_answer(message: types.CallbackQuery) -> None:
-    """Обрабатывает ответ пользователя на тест.
+    """ Processes the user's response to the test.
 
-    Args:
-        message (types.CallbackQuery): Callback-запрос от пользователя.
+        Args:
+            message (types.Call back Query): A callback request from the user.
     """
     logging.info(f"User {message.from_user.id} submitted an answer.")
     check_ans(message)
@@ -144,10 +144,10 @@ def check_answer(message: types.CallbackQuery) -> None:
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_worker(message: types.CallbackQuery) -> None:
-    """Обрабатывает любые другие callback-запросы от пользователя.
+    """Handles any other callback requests from the user.
 
     Args:
-        message (types.CallbackQuery): Callback-запрос от пользователя.
+        message (types.Call back Query): A callback request from the user.
     """
     logging.info(f"Processing callback from user {message.from_user.id}.")
     callbackk(message)
@@ -155,10 +155,10 @@ def callback_worker(message: types.CallbackQuery) -> None:
 
 @bot.message_handler(content_types=["photo"])
 def qrcode_worker(message: types.Message) -> None:
-    """Обрабатывает фото, отправленное пользователем, и генерирует QR-код.
+    """ Processes the photo sent by the user and generates a QR code.
 
     Args:
-        message (types.Message): Сообщение от пользователя с фото.
+        message (type.Message): A message from a user with a photo.
     """
     logging.info(f"User {message.from_user.id} sent a photo.")
     qr_code(message)

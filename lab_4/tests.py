@@ -13,10 +13,10 @@ logging_config.setup_logging()
 
 
 def testing(message: types.CallbackQuery) -> None:
-    """Обрабатывает запрос пользователя на начало теста.
+    """Processes the user's request to start the test.
 
     Args:
-        message (types.CallbackQuery): Callback-запрос от пользователя с информацией о тесте.
+        message (types.Call back Query): A callback request from the user with information about the test.
     """
     logging.info(f"User {message.from_user.id} initiated a test with data: {message.data}")
 
@@ -37,10 +37,10 @@ def testing(message: types.CallbackQuery) -> None:
 
 
 def check_ans(message: types.CallbackQuery) -> None:
-    """Проверяет ответ пользователя на тест.
+    """Checks the user's response to the test.
 
     Args:
-        message (types.CallbackQuery): Callback-запрос от пользователя с данными ответа.
+        message (types.Call back Query): Callback is a request from the user with the response data.
     """
     logging.info(f"User {message.from_user.id} submitted an answer with data: {message.data}")
 

@@ -12,10 +12,10 @@ logging_config.setup_logging()
 
 
 def qr_code(message: types.Message) -> None:
-    """Обрабатывает изображение, отправленное пользователем, и декодирует QR-код.
+    """ Processes the image sent by the user and decodes the QR code.
 
     Args:
-        message (types.Message): Сообщение от пользователя, содержащее изображение с QR-кодом.
+        message (types.Message): A message from the user containing an image with a QR code.
     """
     user_id = message.chat.id
     try:
@@ -31,7 +31,7 @@ def qr_code(message: types.Message) -> None:
 
         img = cv2.imread(file_path)
         if img is None:
-            logging.error(f"Не удалось загрузить изображение для пользователя {user_id}: {file_path}")
+            logging.error(f"Failed to upload image for user {user_id}: {file_path}")
             bot.send_message(user_id, text="Ошибка при обработке изображения.")
             return
 
@@ -40,12 +40,12 @@ def qr_code(message: types.Message) -> None:
         if barcodes:
             for barcode in barcodes:
                 barcodeData = barcode.data.decode('utf-8')
-                logging.info(f'Результат декодирования для пользователя {user_id}: {barcodeData}')
+                logging.info(f'Decoding result for the user {user_id}: {barcodeData}')
                 bot.send_message(user_id, text=barcodeData)
         else:
-            logging.warning(f"QR-код не найден в изображении для пользователя {user_id}.")
+            logging.warning(f"The QR code was not found in the image for the user {user_id}.")
             bot.send_message(user_id, text="QR-код не найден.")
 
     except Exception as e:
-        logging.error(f"Произошла ошибка при обработке QR-кода для пользователя {user_id}: {e}")
+        logging.error(f"An error occurred while processing the QR code for the user {user_id}: {e}")
         bot.send_message(user_id, text="Произошла ошибка при обработке вашего запроса.")

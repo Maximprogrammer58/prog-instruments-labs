@@ -50,15 +50,15 @@ score = 0
 
 
 def get_bool_theme(inline_items: list, db, message) -> list:
-    """Обновляет inline-кнопки тем в зависимости от завершенных тем пользователя.
+    """ Updates the inline theme buttons depending on the user's completed themes.
 
     Args:
-        inline_items (list): Список inline-кнопок.
-        db: Объект базы данных.
-        message: Сообщение от пользователя.
+        inline_items (list): A list of inline buttons.
+        db: A database object.
+        message: A message from the user.
 
     Returns:
-        list: Обновленный список inline-кнопок.
+        list: Updated list of inline buttons.
     """
     inline_items = copy.deepcopy(inline_items)
     users_done_theme = db.get_course_step(message.from_user.id)
@@ -71,15 +71,15 @@ def get_bool_theme(inline_items: list, db, message) -> list:
 
 
 def get_keyboard_button(button_items: list, resize_keyboard: bool = True, one_time_keyboard: bool = True) -> types.ReplyKeyboardMarkup:
-    """Создает клавиатуру с кнопками.
+    """Creates a keyboard with buttons.
 
     Args:
-        button_items (list): Список кнопок.
-        resize_keyboard (bool): Нужно ли изменять размер клавиатуры.
-        one_time_keyboard (bool): Нужно ли скрывать клавиатуру после нажатия.
+        button_items (list): A list of buttons.
+        resize_keyboard (bool): Whether to resize the keyboard.
+        one_time_keyboard (bool): Whether to hide the keyboard after pressing.
 
     Returns:
-        types.ReplyKeyboardMarkup: Клавиатура с кнопками.
+        types.ReplyKeyboardMarkup: Keyboard with buttons.
     """
     keyboard = telebot.types.ReplyKeyboardMarkup(resize_keyboard=resize_keyboard, one_time_keyboard=one_time_keyboard)
     for item in button_items:
@@ -92,14 +92,14 @@ def get_keyboard_button(button_items: list, resize_keyboard: bool = True, one_ti
 
 
 def get_inline_button(inline_items: list, row_width: int = 3) -> types.InlineKeyboardMarkup:
-    """Создает inline-кнопки.
+    """ Creates inline buttons.
 
     Args:
-        inline_items (list): Список inline-кнопок.
-        row_width (int): Ширина строки кнопок.
+        inline_items (list): A list of inline buttons.
+        row_width (int): The width of the button row.
 
     Returns:
-        types.InlineKeyboardMarkup: Inline-кнопки.
+        types.InlineKeyboardMarkup: Inline buttons.
     """
     inline_buttons = telebot.types.InlineKeyboardMarkup(row_width=row_width)
     for item in inline_items:
@@ -112,10 +112,10 @@ def get_inline_button(inline_items: list, row_width: int = 3) -> types.InlineKey
 
 
 def callbackk(message: types.CallbackQuery) -> None:
-    """Обрабатывает callback-запросы от кнопок.
+    """Handles callback requests from buttons.
 
     Args:
-        message (types.CallbackQuery): Callback-запрос от пользователя.
+        message (types.Call back Query): A callback request from the user.
     """
     user_id = message.from_user.id
     data = message.data
@@ -132,11 +132,11 @@ def callbackk(message: types.CallbackQuery) -> None:
 
 
 def handle_courses(user_id: int, data: str) -> None:
-    """Обрабатывает запросы, связанные с курсами.
+    """Handles requests related to courses.
 
     Args:
-        user_id (int): Идентификатор пользователя.
-        data (str): Данные из callback.
+        user_id (int): User ID.
+        data (str): Data from the callback.
     """
     logging.info(f"User {user_id} is handling courses.")
     if "final" in data:
@@ -146,10 +146,10 @@ def handle_courses(user_id: int, data: str) -> None:
 
 
 def handle_final_course(user_id: int) -> None:
-    """Обрабатывает запрос на завершение курса.
+    """ Processes the request to complete the course.
 
-    Args:
-        user_id (int): Идентификатор пользователя.
+        Args:
+            user_id (int): User ID.
     """
     if is_done_full_course(db, user_id):
         logging.info(f"User {user_id} completed the course.")
@@ -162,10 +162,10 @@ def handle_final_course(user_id: int) -> None:
 
 
 def handle_choose_themes(user_id: int) -> None:
-    """Обрабатывает запрос на выбор темы.
+    """ Processes a request to select a topic.
 
-    Args:
-        user_id (int): Идентификатор пользователя.
+        Args:
+            user_id (int): User ID.
     """
     if not db.get_course_step(user_id):
         db.insert_course_step(0, user_id, False)
@@ -174,10 +174,10 @@ def handle_choose_themes(user_id: int) -> None:
 
 
 def handle_test(user_id: int) -> None:
-    """Обрабатывает запрос на тестирование.
+    """ Processes the test request.
 
     Args:
-        user_id (int): Идентификатор пользователя.
+        user_id (int): The user ID.
     """
     if not db.get_result(user_id):
         db.insert_test_result(user_id)
@@ -187,13 +187,13 @@ def handle_test(user_id: int) -> None:
 
 
 def check_theme_num(data: str) -> str | None:
-    """Проверяет номер темы в данных.
+    """Checks the topic number in the data.
 
     Args:
-        data (str): Данные из callback.
+        data (str): Data from the callback.
 
     Returns:
-        str | None: Номер темы или None, если не найден.
+        str | None: The topic number or None if not found.
     """
     for i in range(len(INLINE_THEMES) - 1):
         if str(i) in data:
@@ -202,30 +202,30 @@ def check_theme_num(data: str) -> str | None:
 
 
 def is_done_full_course(db, user_id: int) -> bool:
-    """Проверяет, завершен ли полный курс.
+    """Checks whether the full course is completed.
 
     Args:
-        db: Объект базы данных.
-        user_id (int): Идентификатор пользователя.
+        db: A database object.
+        user_id (int): The user ID.
 
     Returns:
-        bool: True, если курс завершен, иначе False.
+        bool: True if the course is completed, otherwise False.
     """
     info = db.get_course_step(user_id)
     return all(info[i] for i in range(1, len(info)))
 
 
 def edit_inline_button(theme_num: str, inline_view_course: list, db, user_id: int) -> list:
-    """Редактирует inline-кнопки для курса.
+    """ Edits inline buttons for the course.
 
     Args:
-        theme_num (str): Номер темы.
-        inline_view_course (list): Список текущих inline-кнопок.
-        db: Объект базы данных.
-        user_id (int): Идентификатор пользователя.
+        theme_num (str): The topic number.
+        inline_view_course (list): A list of current inline buttons.
+        db: A database object.
+        user_id (int): The user ID.
 
     Returns:
-        list: Обновленный список inline-кнопок.
+        list: Updated list of inline buttons.
     """
     list_courses = copy.deepcopy(inline_view_course)
 
@@ -245,11 +245,11 @@ def edit_inline_button(theme_num: str, inline_view_course: list, db, user_id: in
 
 
 def delete_last_messages(message: types.Message, all_back: bool = True) -> None:
-    """Удаляет последние сообщения пользователя.
+    """ Deletes the user's recent messages.
 
-    Args:
-        message (types.Message): Сообщение от пользователя.
-        all_back (bool): Удалять ли все последние сообщения.
+        Args:
+            message (types.Message): A message from the user.
+            all_back (bool): Whether to delete all recent messages.
     """
     if all_back:
         for i in range(10):
@@ -262,12 +262,12 @@ def delete_last_messages(message: types.Message, all_back: bool = True) -> None:
 
 
 def gen_id_test(message: types.Message, test: str, test_code: str) -> None:
-    """Генерирует тест для пользователя.
+    """Generates text for the user.
 
     Args:
-        message (types.Message): Сообщение от пользователя.
-        test (str): Путь к файлу с тестом.
-        test_code (str): Код теста.
+        message (types.Message): A message from the user.
+        test (str): The path to the test file.
+        test_code (str): The test code.
     """
     with open(test, encoding="utf-8") as file:
         rows = file.readlines()[::-1]

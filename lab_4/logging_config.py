@@ -2,10 +2,10 @@ import logging
 
 
 def setup_logging() -> None:
-    """Настраивает базовую конфигурацию логирования.
+    """ Configures the basic logging configuration.
 
-    Устанавливает уровень логирования на INFO и задает формат сообщений.
-    Сообщения будут выводиться в стандартный поток вывода.
+    Sets the logging level to INFO and sets the message format.
+    The messages will be output to the standard output stream.
     """
     logging.basicConfig(
         level=logging.INFO,
