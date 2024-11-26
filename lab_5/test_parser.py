@@ -3,6 +3,7 @@ import requests
 
 from typing import Tuple, Any
 from modules.parser import correct_wind_info, parser
+from mock_response import mock_response_content
 
 
 @pytest.mark.parametrize("wind, expected", [
@@ -25,17 +26,6 @@ def test_correct_wind_info(wind: str, expected: Tuple[str, int]) -> None:
     assert correct_wind_info(wind) == expected
 
 
-def read_mock_html() -> str:
-    """
-    Reads the mock HTML response from a file.
-
-    Returns:
-        str: The content of the mock HTML file.
-    """
-    with open('mock_response.html', 'r', encoding='utf-8') as file:
-        return file.read()
-
-
 def mock_requests_get(url: str, headers: Any) -> Any:
     """
     Mocks the requests.get method to return a mock response.
@@ -49,7 +39,7 @@ def mock_requests_get(url: str, headers: Any) -> Any:
     """
     class MockResponse:
         def __init__(self):
-            self.text = read_mock_html()
+            self.text = mock_response_content
     return MockResponse()
 
 
